@@ -41,6 +41,10 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+@app.get("/")
+def sayHello():
+    return {"Hello": "World"}
+
 @app.websocket("/stream")
 async def stream(websocket: WebSocket): 
     await manager.connect(websocket)
