@@ -36,11 +36,11 @@ class ConnectionManager:
         self.active_connections.remove(websocket)
     
     async def send_detected_item(self, message: dict, websocket: WebSocket):
-        await websocket.send_json(message)  # ✅ FastAPI handles JSON serialization
+        await websocket.send_json(message) 
 
 
 manager = ConnectionManager()
-
+ 
 @app.get("/")
 def sayHello():
     return {"Hello": "World"}
