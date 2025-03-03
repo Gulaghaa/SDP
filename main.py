@@ -28,11 +28,12 @@ async def websocket_endpoint(websocket: WebSocket):
     try: 
         while True:
             base64_data = await websocket.receive_text()  # Receive image bytes
+            print("\n" + base64_data)
             # Decode Base64 string to bytes
             image_data = base64.b64decode(base64_data)
             nparr = np.frombuffer(image_data, np.uint8)
             frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
+    
             if frame is None:
                 print("Error: Could not decode image")
                 continue  # Skip this frame if decoding fails
@@ -53,7 +54,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     # Draw bounding box
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                     cv2.putText(frame, f"{label} {confidence:.2f}", (x1, y1 - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (    0, 255, 0), 2)
 
             # Encode processed frame
             _, buffer = cv2.imencode(".jpg", frame)
