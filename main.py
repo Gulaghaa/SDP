@@ -16,7 +16,7 @@ app.add_middleware(
 
 # Load trained YOLO Model
 model = YOLO("./best.pt")  
- 
+  
 @app.get("/")
 def sayHello():
     return {"Hello": "World"}
