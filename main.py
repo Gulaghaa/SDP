@@ -38,7 +38,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 print("Error: Could not decode image")
                 continue  # Skip this frame if decoding fails
 
-
             # YOLO detection
             results = model(frame)
             detections = []
