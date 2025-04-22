@@ -1,0 +1,276 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "gulaga",
+      "password": "gulaga"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "A101",
+      "name": "Conference Room",
+      "lastCheckedTime": "2025-04-22 04:03",
+      "inventory": [],
+      "missedItems": [
+        {
+          "id": "INV-102",
+          "name": "Table",
+          "qrCode": "3748912634"
+        },
+        {
+          "id": "INV-104",
+          "name": "Projector",
+          "qrCode": "3874629102"
+        },
+        {
+          "id": "INV-101",
+          "name": "White_Chair",
+          "qrCode": "8923746271"
+        },
+        {
+          "id": "INV-103",
+          "name": "Monitor",
+          "qrCode": "7128345623"
+        }
+      ]
+    },
+    {
+      "id": "A102",
+      "name": "Server Room",
+      "lastCheckedTime": "2025-02-18 99:99",
+      "inventory": [
+        {
+          "id": "INV-201",
+          "name": "Router",
+          "qrCode": "2837461284"
+        },
+        {
+          "id": "INV-202",
+          "name": "Monitor",
+          "qrCode": "5638274190"
+        },
+        {
+          "id": "INV-203",
+          "name": "Server Rack",
+          "qrCode": "4827362910"
+        },
+        {
+          "id": "INV-204",
+          "name": "UPS Battery",
+          "qrCode": "7463829105"
+        }
+      ],
+      "missedItems": [
+        {
+          "id": "INV-205",
+          "name": "Switch",
+          "qrCode": "9482736150"
+        }
+      ]
+    },
+    {
+      "id": "A103",
+      "name": "Group Study Room",
+      "lastCheckedTime": "2025-02-10 16:15",
+      "inventory": [
+        {
+          "id": "INV-301",
+          "name": "Red Chair",
+          "qrCode": "9847326521"
+        },
+        {
+          "id": "INV-302",
+          "name": "Table",
+          "qrCode": "4938271562"
+        },
+        {
+          "id": "INV-303",
+          "name": "Whiteboard",
+          "qrCode": "8473629104"
+        }
+      ],
+      "missedItems": [
+        {
+          "id": "INV-304",
+          "name": "Marker Set",
+          "qrCode": "5839201746"
+        }
+      ]
+    },
+    {
+      "id": "B101",
+      "name": "Classroom 1",
+      "lastCheckedTime": "2025-02-28 09:50",
+      "inventory": [
+        {
+          "id": "INV-401",
+          "name": "White Chair",
+          "qrCode": "9823746512"
+        },
+        {
+          "id": "INV-402",
+          "name": "White Chair",
+          "qrCode": "8392713645"
+        },
+        {
+          "id": "INV-403",
+          "name": "Table",
+          "qrCode": "7482913654"
+        },
+        {
+          "id": "INV-404",
+          "name": "Projector",
+          "qrCode": "8273649102"
+        }
+      ],
+      "missedItems": []
+    },
+    {
+      "id": "B102",
+      "name": "Classroom 2",
+      "lastCheckedTime": "2025-02-20 18:30",
+      "inventory": [
+        {
+          "id": "INV-501",
+          "name": "Red Chair",
+          "qrCode": "5638291470"
+        },
+        {
+          "id": "INV-502",
+          "name": "Red Chair",
+          "qrCode": "5647382910"
+        },
+        {
+          "id": "INV-503",
+          "name": "Monitor",
+          "qrCode": "4857392106"
+        }
+      ],
+      "missedItems": [
+        {
+          "id": "INV-504",
+          "name": "Router",
+          "qrCode": "3927485612"
+        }
+      ]
+    },
+    {
+      "id": "B103",
+      "name": "Classroom 3",
+      "lastCheckedTime": "2025-02-22 13:20",
+      "inventory": [
+        {
+          "id": "INV-601",
+          "name": "Table",
+          "qrCode": "6758293401"
+        },
+        {
+          "id": "INV-602",
+          "name": "Telephone",
+          "qrCode": "1029384756"
+        }
+      ],
+      "missedItems": [
+        {
+          "id": "INV-603",
+          "name": "Speaker System",
+          "qrCode": "2938475610"
+        }
+      ]
+    },
+    {
+      "id": "C101",
+      "name": "Large Conference Room",
+      "lastCheckedTime": "2025-02-15 08:10",
+      "inventory": [
+        {
+          "id": "INV-701",
+          "name": "White Chair",
+          "qrCode": "8473629105"
+        },
+        {
+          "id": "INV-702",
+          "name": "White Chair",
+          "qrCode": "2837461293"
+        },
+        {
+          "id": "INV-703",
+          "name": "Monitor",
+          "qrCode": "1209384756"
+        },
+        {
+          "id": "INV-704",
+          "name": "Router",
+          "qrCode": "5948372016"
+        }
+      ],
+      "missedItems": []
+    },
+    {
+      "id": "C102",
+      "name": "IT Lab",
+      "lastCheckedTime": "2025-02-26 10:45",
+      "inventory": [
+        {
+          "id": "INV-801",
+          "name": "Monitor",
+          "qrCode": "2039485761"
+        },
+        {
+          "id": "INV-802",
+          "name": "Monitor",
+          "qrCode": "8473629104"
+        },
+        {
+          "id": "INV-803",
+          "name": "Keyboard",
+          "qrCode": "2938475610"
+        },
+        {
+          "id": "INV-804",
+          "name": "Router",
+          "qrCode": "1928374657"
+        }
+      ],
+      "missedItems": []
+    },
+    {
+      "id": "L101",
+      "name": "Library Room",
+      "lastCheckedTime": "2025-02-17 17:55",
+      "inventory": [
+        {
+          "id": "INV-901",
+          "name": "Table",
+          "qrCode": "6758291034"
+        },
+        {
+          "id": "INV-902",
+          "name": "Bookshelf",
+          "qrCode": "3847269102"
+        }
+      ],
+      "missedItems": []
+    },
+    {
+      "id": "L102",
+      "name": "Discussion Room",
+      "lastCheckedTime": "2025-02-19 15:00",
+      "inventory": [
+        {
+          "id": "INV-1001",
+          "name": "Monitor",
+          "qrCode": "5678291034"
+        }
+      ],
+      "missedItems": [
+        {
+          "id": "INV-1002",
+          "name": "Microphone",
+          "qrCode": "2938475610"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,249 @@
+import { useState } from "react";
+import { usePostData } from "../../../services/apiUtilities";
+import { useHistory } from "react-router-dom";
+import { BarcodeScanner, ErrorModal } from '../../../components/index'
+import { LiaEdit } from "react-icons/lia";
+import { AiTwotoneDelete } from "react-icons/ai";
+import { MdOutlineDoneOutline } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
+import { FaCamera } from "react-icons/fa";
+
+
+
+
+import styles from "./AddRoom.module.css";
+
+const AddRoom = () => {
+  const [roomId, setRoomId] = useState("");
+  const [roomName, setRoomName] = useState("");
+  const [inventory, setInventory] = useState([]);
+  const [newItem, setNewItem] = useState({ name: "", qrCode: "" });
+  const [isScanning, setIsScanning] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [tempInventory, setTempInventory] = useState([]);
+  const [isEditingScanning, setIsEditingScanning] = useState(false);
+  const [error, setError] = useState("");
+
+  const history = useHistory();
+
+  const isBarcodeUnique = (barcode, excludeIndex = null) => {
+    return !inventory.some((item, index) => index !== excludeIndex && item.qrCode === barcode);
+  };
+
+  const preventEnterSubmit = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
+  const handleAddItem = () => {
+    if (!newItem.name || !newItem.qrCode) {
+      setError("Item name and QR code are required!");
+      return;
+    }
+
+    if (!isBarcodeUnique(newItem.qrCode)) {
+      setError("This QR code is already assigned to another item. Please use a unique barcode.");
+      return;
+    }
+
+    setInventory([...inventory, newItem]);
+    setNewItem({ name: "", qrCode: "" });
+    setError("");
+  };
+
+  const handleEditItem = (index) => {
+    setEditingIndex(index);
+    setTempInventory([...inventory]);
+  };
+
+  const handleUpdateTempInventory = (index, field, value) => {
+    const updatedTemp = [...tempInventory];
+    updatedTemp[index] = { ...updatedTemp[index], [field]: value };
+    setTempInventory(updatedTemp);
+  };
+
+  const handleSaveAllEdits = () => {
+    const duplicateCheck = new Set();
+    for (let item of tempInventory) {
+      if (duplicateCheck.has(item.qrCode)) {
+        setError("Duplicate QR codes detected! Ensure all QR codes are unique.");
+        return;
+      }
+      duplicateCheck.add(item.qrCode);
+    }
+
+    setInventory(tempInventory);
+    setEditingIndex(null);
+    setError("");
+    console.log("Updated Room State:", { id: roomId, name: roomName, inventory: tempInventory });
+  };
+
+  const handleDeleteItem = (index) => {
+    setInventory(inventory.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!roomId || !roomName || inventory.length === 0) {
+      setError("Room ID, Room Name, and at least one inventory item are required!");
+      return;
+    }
+
+    const newRoom = { id: roomId, name: roomName, inventory };
+    console.log("Submitting Room Data:", newRoom);
+
+    const response = await usePostData("http://localhost:3000/rooms", newRoom);
+
+    if (response) {
+      alert("Room added successfully!");
+      history.push("/admin");
+    } else {
+      setError("Failed to add room. Try again.");
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      {error && <ErrorModal message={error} onClose={() => setError("")} />}
+
+      <h2 className={styles.title}>Add a New Room</h2>
+
+      <form onSubmit={handleSubmit} className={styles.form} onKeyDown={preventEnterSubmit}>
+        <label className={styles.label}>Room Number</label>
+        <input
+          type="text"
+          placeholder="e.g., A101"
+          value={roomId}
+          onChange={(e) => setRoomId(e.target.value)}
+          required
+          className={styles.input}
+        />
+
+        <label className={styles.label}>Room Name</label>
+        <input
+          type="text"
+          placeholder="e.g., Conference Room"
+          value={roomName}
+          onChange={(e) => setRoomName(e.target.value)}
+          required
+          className={styles.input}
+        />
+
+        <div className={styles.inventorySection}>
+          <h3>Inventory</h3>
+
+          <div className={styles.inventoryInput}>
+            <input
+              type="text"
+              placeholder="Item Name (e.g., Monitor)"
+              value={newItem.name}
+              onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+              className={styles.input}
+            />
+
+            <div className={styles.qrInputContainer}>
+              <input
+                type="text"
+                placeholder="Scan QR Code"
+                value={newItem.qrCode}
+                onChange={(e) => setNewItem({ ...newItem, qrCode: e.target.value })}
+                className={styles.input}
+              />
+              <button
+                type="button"
+                className={styles.cameraButton}
+                onClick={() => setIsScanning(!isScanning)}
+              >
+                <FaCamera />
+              </button>
+            </div>
+
+            {isScanning && (
+              <BarcodeScanner
+                onScan={(qrCode) => {
+                  setNewItem({ ...newItem, qrCode });
+                  setIsScanning(false);
+                }}
+                closeScanner={() => setIsScanning(false)} // ✅ Pass the closeScanner function
+              />
+            )}
+
+
+            <button type="button" className={styles.addButton} onClick={handleAddItem}>
+              Add Item
+            </button>
+          </div>
+
+          <ul className={styles.inventoryList}>
+            {inventory.map((item, index) => (
+              <li key={index} className={styles.inventoryItem}>
+                {editingIndex !== null && editingIndex === index ? (
+                  <>
+                    <input
+                      type="text"
+                      value={tempInventory[index].name}
+                      onChange={(e) => handleUpdateTempInventory(index, "name", e.target.value)}
+                      className={styles.editInput}
+                    />
+                    <div className={styles.qrInputContainer}>
+                      <input
+                        type="text"
+                        value={tempInventory[index].qrCode}
+                        onChange={(e) => handleUpdateTempInventory(index, "qrCode", e.target.value)}
+                        className={styles.editInput}
+                      />
+                      <button
+                        type="button"
+                        className={styles.cameraButton}
+                        onClick={() => setIsEditingScanning(index)}
+                      >
+                        <FaCamera />
+                      </button>
+                    </div>
+
+                    {isEditingScanning === index && (
+                      <BarcodeScanner
+                        onScan={(qrCode) => {
+                          handleUpdateTempInventory(index, "qrCode", qrCode);
+                          setIsEditingScanning(false);
+                        }}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <span>Name: {item.name} - Barcode: {item.qrCode}</span>
+                )}
+                {editingIndex === index ? (
+                  <div>
+                    <button type="button" className={styles.saveButton} onClick={handleSaveAllEdits}>
+                      <MdOutlineDoneOutline />
+                    </button>
+                    <button type="button" className={styles.cancelButton} onClick={() => setEditingIndex(null)}>
+                      <RxCross2 />
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <button type="button" className={styles.editButton} onClick={() => handleEditItem(index)}>
+                      <LiaEdit fontSize={"22px"} style={{color:"white"}}/>
+                    </button>
+                    <button type="button" className={styles.deleteButton} onClick={() => handleDeleteItem(index)}>
+                      <AiTwotoneDelete fontSize={"22px"} style={{color:"black"}} />
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <button type="submit" className={styles.submitButton}>
+          Save Room
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default AddRoom;
