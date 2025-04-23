@@ -4,3 +4,4 @@ opencv_python==4.10.0.84
 ultralytics==8.3.68
 uvicorn==0.34.0
 websockets==15.0
+motor==3.7.0
