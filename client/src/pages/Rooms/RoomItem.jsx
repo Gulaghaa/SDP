@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { useFetchData, usePatchData } from "../../services/apiUtilities";
+import { useFetchData, usePutData } from "../../services/apiUtilities";
 import { BarcodeScanner, Navbar } from "../../components/index";
 import ObjectDetection from "../../components/ObjectDetection"; // Import Object Detection
 import styles from "./RoomItem.module.css";
@@ -17,28 +17,30 @@ const RoomItem = () => {
   const [missedItems, setMissedItems] = useState([]);
   const [view, setView] = useState("inventory");
   const [modal, setModal] = useState({ type: "", message: "", visible: false });
-  const [warning, setWarning] = useState({ visible: false, message: "", uncheckedItems: [] });
+  const [warning, setWarning] = useState({
+    visible: false,
+    message: "",
+    uncheckedItems: [],
+  });
   const history = useHistory();
-
-
 
   const getAZTime = () => {
     const now = new Date();
     now.setHours(now.getHours()); // Adjust UTC → Baku time
     const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mi = String(now.getMinutes()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mi = String(now.getMinutes()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
   };
-
-
 
   useEffect(() => {
     const fetchRoomInventory = async () => {
       try {
-        const data = await useFetchData(`http://localhost:3000/rooms/${roomId}`);
+        const data = await useFetchData(
+          `https://smart-inventory-management-k5rx.onrender.com/rooms/${roomId}`
+        );
         setRoom(data);
 
         setMissedItems(data.missedItems || []);
@@ -52,10 +54,9 @@ const RoomItem = () => {
     fetchRoomInventory();
   }, [roomId]);
 
-
   const handleBarcodeScan = (barcode, index) => {
-    console.log(room.inventory[index].qrCode)
-    console.log(barcode)
+    console.log(room.inventory[index].qrCode);
+    console.log(barcode);
     if (room.inventory[index].qrCode.trim() === barcode.trim()) {
       setBarcodeChecks((prev) => ({ ...prev, [index]: true }));
       showModal("success", "Barcode matched successfully!");
@@ -85,11 +86,13 @@ const RoomItem = () => {
       setDetectingIndex(null);
     } else {
       handleMoveToMissed(detectingIndex);
-      showModal("error", "Object detection failed! Item moved to Missed Items.");
+      showModal(
+        "error",
+        "Object detection failed! Item moved to Missed Items."
+      );
       setDetectingIndex(null);
     }
   };
-
 
   const handleCompleteVerification = () => {
     const uncheckedItems = room.inventory.filter((_, i) => {
@@ -110,16 +113,23 @@ const RoomItem = () => {
   };
 
   const completeVerification = async (uncheckedItems = []) => {
-    const verifiedItems = room.inventory.filter((_, i) => barcodeChecks[i] && objectChecks[i]);
+    const verifiedItems = room.inventory.filter(
+      (_, i) => barcodeChecks[i] && objectChecks[i]
+    );
     const updatedMissedItems = [...room.missedItems, ...uncheckedItems];
     const updatedTime = getAZTime();
 
     try {
-      await usePatchData(`http://localhost:3000/rooms/${roomId}`, {
-        inventory: verifiedItems,
-        missedItems: updatedMissedItems,
-        lastCheckedTime: updatedTime,
-      });
+      await usePutData(
+        `https://smart-inventory-management-k5rx.onrender.com/rooms/${roomId}`,
+        {
+          id: room.id,
+          name: room.name,
+          inventory: verifiedItems,
+          missedItems: updatedMissedItems,
+          lastCheckedTime: updatedTime,
+        }
+      );
 
       setRoom((prevRoom) => ({
         ...prevRoom,
@@ -132,48 +142,58 @@ const RoomItem = () => {
       setObjectChecks({});
       setMissedItems(updatedMissedItems);
       showModal("success", "Verification completed!");
-      setTimeout(() => {history.push(`/rooms`)}, 1000);
-      
+      setTimeout(() => {
+        history.push(`/rooms`);
+      }, 1000);
     } catch (err) {
-      console.error("PATCH failed:", err);
+      console.error("PUT failed:", err);
       showModal("error", "Failed to update the server.");
     }
 
     setWarning({ visible: false, message: "", uncheckedItems: [] });
   };
 
-
-
   const handleMoveToMissed = async (index) => {
     if (barcodeChecks[index] && objectChecks[index]) {
-      showModal("error", "This item is verified and cannot be moved to 'Missed Items'!");
+      showModal(
+        "error",
+        "This item is verified and cannot be moved to 'Missed Items'!"
+      );
       return;
     }
 
     const itemToMove = room.inventory[index];
     const backendMissedItems = room.missedItems || [];
+    const updatedTime = getAZTime();
 
     // Avoid duplicate QR codes
     const updatedMissedItems = [
-      ...backendMissedItems.filter(item => item.qrCode !== itemToMove.qrCode),
+      ...backendMissedItems.filter((item) => item.qrCode !== itemToMove.qrCode),
       itemToMove,
     ];
     const updatedInventory = room.inventory.filter((_, i) => i !== index);
 
     try {
-      await usePatchData(`http://localhost:3000/rooms/${roomId}`, {
-        missedItems: updatedMissedItems,
-        inventory: updatedInventory,
-      });
+      await usePutData(
+        `https://smart-inventory-management-k5rx.onrender.com/rooms/${roomId}`,
+        {
+          id: room.id,
+          name: room.name,
+          inventory: updatedInventory,
+          missedItems: updatedMissedItems,
+          lastCheckedTime: updatedTime,
+        }
+      );
 
-      // ✅ Update both room state and missedItems state for immediate UI feedback
+      // Update both room state and missedItems state for immediate UI feedback
       setRoom((prevRoom) => ({
         ...prevRoom,
         inventory: updatedInventory,
         missedItems: updatedMissedItems,
+        lastCheckedTime: updatedTime,
       }));
 
-      setMissedItems(updatedMissedItems); // ✅ Sync UI
+      setMissedItems(updatedMissedItems);
 
       // Cleanup check state for that index
       setBarcodeChecks((prev) => {
@@ -190,36 +210,41 @@ const RoomItem = () => {
 
       showModal("success", "Item moved to 'Missed Items'!");
     } catch (error) {
-      console.error("PATCH failed:", error);
+      console.error("PUT failed:", error);
       showModal("error", "Failed to update the server.");
     }
   };
-
-
-
 
   const handleMoveToInventory = async (index) => {
     const itemToReturn = missedItems[index];
 
     const updatedMissedItems = missedItems.filter((_, i) => i !== index);
     const updatedInventory = [...room.inventory, itemToReturn];
+    const updatedTime = getAZTime();
 
     try {
-      await usePatchData(`http://localhost:3000/rooms/${roomId}`, {
-        inventory: updatedInventory,
-        missedItems: updatedMissedItems,
-      });
+      await usePutData(
+        `https://smart-inventory-management-k5rx.onrender.com/rooms/${roomId}`,
+        {
+          id: room.id,
+          name: room.name,
+          inventory: updatedInventory,
+          missedItems: updatedMissedItems,
+          lastCheckedTime: updatedTime,
+        }
+      );
 
       setRoom((prevRoom) => ({
         ...prevRoom,
         inventory: updatedInventory,
         missedItems: updatedMissedItems,
+        lastCheckedTime: updatedTime,
       }));
 
       setMissedItems(updatedMissedItems);
       showModal("success", "Item returned to inventory!");
     } catch (err) {
-      console.error("PATCH failed:", err);
+      console.error("PUT failed:", err);
       showModal("error", "Failed to update the server.");
     }
   };
@@ -240,20 +265,26 @@ const RoomItem = () => {
 
         {room && !loading && !error && (
           <>
-            <h2 className={styles.title}>{room.name} - {room.id}</h2>
+            <h2 className={styles.title}>
+              {room.name} - {room.id}
+            </h2>
             <p className={styles.roomDetails}>
               Room Details: {room.details || "No details available"}
             </p>
 
             <div className={styles.viewToggle}>
               <button
-                className={`${styles.toggleButton} ${view === "inventory" ? styles.active : ""}`}
+                className={`${styles.toggleButton} ${
+                  view === "inventory" ? styles.active : ""
+                }`}
                 onClick={() => setView("inventory")}
               >
                 Inventory
               </button>
               <button
-                className={`${styles.toggleButton} ${view === "missed" ? styles.active : ""}`}
+                className={`${styles.toggleButton} ${
+                  view === "missed" ? styles.active : ""
+                }`}
                 onClick={() => setView("missed")}
               >
                 Missed Items
@@ -279,7 +310,12 @@ const RoomItem = () => {
                     {room.inventory.map((item, index) => {
                       const barcodeChecked = barcodeChecks[index] || false;
                       const objectChecked = objectChecks[index] || false;
-                      const progress = barcodeChecked && objectChecked ? 100 : barcodeChecked ? 50 : 0;
+                      const progress =
+                        barcodeChecked && objectChecked
+                          ? 100
+                          : barcodeChecked
+                          ? 50
+                          : 0;
 
                       return (
                         <tr key={index}>
@@ -294,10 +330,18 @@ const RoomItem = () => {
                             </button>
                           </td>
                           <td>
-                            <input type="checkbox" checked={barcodeChecked} readOnly />
+                            <input
+                              type="checkbox"
+                              checked={barcodeChecked}
+                              readOnly
+                            />
                           </td>
                           <td>
-                            <input type="checkbox" checked={objectChecked} readOnly />
+                            <input
+                              type="checkbox"
+                              checked={objectChecked}
+                              readOnly
+                            />
                           </td>
                           <td>
                             <div className={styles.progressBar}>
@@ -309,24 +353,28 @@ const RoomItem = () => {
                                     barcodeChecked && objectChecked
                                       ? "100%"
                                       : barcodeChecked
-                                        ? "50%"
-                                        : "0%",
+                                      ? "50%"
+                                      : "0%",
                                 }}
                               ></div>
 
                               <div
-                                className={`${styles.stepCircle} ${barcodeChecked ? styles.complete : styles.active
-                                  }`}
+                                className={`${styles.stepCircle} ${
+                                  barcodeChecked
+                                    ? styles.complete
+                                    : styles.active
+                                }`}
                               >
                                 1
                               </div>
                               <div
-                                className={`${styles.stepCircle} ${barcodeChecked && objectChecked
-                                  ? styles.complete
-                                  : objectChecked
+                                className={`${styles.stepCircle} ${
+                                  barcodeChecked && objectChecked
+                                    ? styles.complete
+                                    : objectChecked
                                     ? styles.active
                                     : ""
-                                  }`}
+                                }`}
                               >
                                 2
                               </div>
@@ -380,7 +428,6 @@ const RoomItem = () => {
               </>
             )}
 
-
             <button
               style={{
                 marginTop: "30px",
@@ -411,37 +458,46 @@ const RoomItem = () => {
             itemName={room.inventory[detectingIndex].name}
             onDetect={handleObjectDetection}
             onCancel={() => {
-              handleMoveToMissed(detectingIndex)
-              setDetectingIndex(null)
-            }
-            }
+              handleMoveToMissed(detectingIndex);
+              setDetectingIndex(null);
+            }}
           />
         )}
 
         {modal.visible && (
-          <div className={`${styles.modal} ${modal.type === "success" ? styles.success : styles.error}`}>
+          <div
+            className={`${styles.modal} ${
+              modal.type === "success" ? styles.success : styles.error
+            }`}
+          >
             <p>{modal.message}</p>
           </div>
         )}
 
         {warning.visible && (
-          <div style={{
-            position: "fixed",
-            top: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            backgroundColor: "#fff3cd",
-            border: "2px solid #856404",
-            color: "#856404",
-            padding: "20px",
-            zIndex: 9999,
-            borderRadius: "6px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
-            width: "400px",
-            textAlign: "center"
-          }}>
-            <p style={{ fontSize: "15px", marginBottom: "12px" }}>{warning.message}</p>
-            <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          <div
+            style={{
+              position: "fixed",
+              top: "20px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "#fff3cd",
+              border: "2px solid #856404",
+              color: "#856404",
+              padding: "20px",
+              zIndex: 9999,
+              borderRadius: "6px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+              width: "400px",
+              textAlign: "center",
+            }}
+          >
+            <p style={{ fontSize: "15px", marginBottom: "12px" }}>
+              {warning.message}
+            </p>
+            <div
+              style={{ display: "flex", justifyContent: "center", gap: "10px" }}
+            >
               <button
                 style={{
                   backgroundColor: "#ffc107",
@@ -464,14 +520,19 @@ const RoomItem = () => {
                   borderRadius: "4px",
                   cursor: "pointer",
                 }}
-                onClick={() => setWarning({ visible: false, message: "", uncheckedItems: [] })}
+                onClick={() =>
+                  setWarning({
+                    visible: false,
+                    message: "",
+                    uncheckedItems: [],
+                  })
+                }
               >
                 Cancel
               </button>
             </div>
           </div>
         )}
-
       </div>
     </>
   );

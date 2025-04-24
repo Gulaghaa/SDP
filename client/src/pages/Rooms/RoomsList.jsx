@@ -16,7 +16,9 @@ const RoomsList = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const data = await useFetchData("http://localhost:3000/rooms");
+        const data = await useFetchData(
+          "https://smart-inventory-management-k5rx.onrender.com/rooms"
+        );
         setRooms(data || []);
       } catch (err) {
         setError("Failed to load rooms. Please try again.");
@@ -98,7 +100,9 @@ const RoomsList = () => {
               <div className={styles.pagination}>
                 <button
                   className={styles.pageButton}
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                 >
                   ◀ Prev
@@ -135,7 +139,9 @@ const RoomsList = () => {
 
                 <button
                   className={styles.pageButton}
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages}
                 >
                   Next ▶

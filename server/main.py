@@ -46,17 +46,16 @@ async def websocket_endpoint(websocket: WebSocket):
     
     try: 
         while True:
-            base64_data = await websocket.receive_text()  # Receive image bytes
-            # Decode Base64 string to bytes
+            base64_data = await websocket.receive_text()
             image_data = base64.b64decode(base64_data)
             nparr = np.frombuffer(image_data, np.uint8)
             frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    
+
             if frame is None:
                 print("Error: Could not decode image")
-                continue  # Skip this frame if decoding fails
+                continue
 
-            # YOLO detection
+            # Run YOLO detection
             results = model(frame)
             detections = []
 
@@ -64,26 +63,18 @@ async def websocket_endpoint(websocket: WebSocket):
                 for box in result.boxes:
                     label = result.names[int(box.cls[0])]
                     confidence = float(box.conf[0])
-                    x1, y1, x2, y2 = map(int, box.xyxy[0])  # Bounding box
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])
 
                     if confidence >= 0.75:
-                        detections.append({"label": label, "confidence": confidence, "box": [x1, y1, x2, y2]})
-                        # Draw bounding box
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                        cv2.putText(frame, f"{label} {confidence:.2f}", (x1, y1 - 10),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        detections.append({
+                            "label": label,
+                            "confidence": confidence,
+                            "box": [x1, y1, x2, y2]
+                        })
 
-            # 🚨 **Only proceed if there are valid detections**
+            # Send back detections only, no image
             if detections:
-                # Encode processed frame
-                success, buffer = cv2.imencode(".jpg", frame)
-                if success:
-                    encoded_image = base64.b64encode(buffer).decode()
-
-                    # Send JSON with image and detections
-                    await websocket.send_json({"image": encoded_image, "detections": detections})
-                else:
-                    print("Error: Frame encoding failed")
+                await websocket.send_json({"detections": detections})
             else:
                 print("No valid detections, skipping frame transmission")
 
@@ -175,7 +166,7 @@ async def add_missed_item(room_id: str, item: Item):
         return {"error": "Room not found"}
     return {"message": "Missed item added"}
 
-# ✅ DELETE: Clear all missed items in a room
+# DELETE: Clear all missed items in a room
 @app.delete("/rooms/{room_id}/missed")
 async def clear_missed_items(room_id: str):
     update_result = await rooms_collection.update_one(
@@ -185,3 +176,13 @@ async def clear_missed_items(room_id: str):
     if update_result.matched_count == 0:
         return {"error": "Room not found"}
     return {"message": "Missed items cleared"}
+
+@app.get("/inventory/check-barcode/{barcode}")
+async def check_barcode_uniqueness(barcode: str):
+    room = await rooms_collection.find_one(
+        {"inventory.qrCode": barcode},
+        {"_id": 0, "id": 1, "name": 1}
+    )
+    if room:
+        return {"exists": True, "room": room}
+    return {"exists": False}

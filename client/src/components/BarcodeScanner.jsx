@@ -9,10 +9,17 @@ const BarcodeScanner = ({ onScan, closeScanner }) => {
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((deviceList) => {
-      const videoDevices = deviceList.filter((device) => device.kind === "videoinput");
+      const videoDevices = deviceList.filter(
+        (device) => device.kind === "videoinput"
+      );
       setDevices(videoDevices);
 
-      const iPhoneCamera = videoDevices.find((device) => device.label.includes("iPhone") || device.label.includes("Camo") || device.label.includes("EpocCam"));
+      const iPhoneCamera = videoDevices.find(
+        (device) =>
+          device.label.includes("iPhone") ||
+          device.label.includes("Camo") ||
+          device.label.includes("EpocCam")
+      );
       if (iPhoneCamera) {
         setSelectedCamera(iPhoneCamera.deviceId);
       } else if (videoDevices.length > 0) {
@@ -30,21 +37,17 @@ const BarcodeScanner = ({ onScan, closeScanner }) => {
           type: "LiveStream",
           target: scannerRef.current,
           constraints: {
-            width: 640, 
+            width: 640,
             height: 480,
             deviceId: selectedCamera ? { exact: selectedCamera } : undefined,
           },
         },
         locator: {
           patchSize: "small",
-          halfSample: true, 
+          halfSample: true,
         },
         decoder: {
-          readers: [
-            "code_39_reader",
-            "code_39_vin_reader",
-            "code_128_reader",
-          ],
+          readers: ["code_39_reader", "code_39_vin_reader", "code_128_reader"],
         },
         locate: true,
         multiple: true,
@@ -57,7 +60,6 @@ const BarcodeScanner = ({ onScan, closeScanner }) => {
         Quagga.start();
       }
     );
-
 
     Quagga.onDetected((data) => {
       if (!scanning) return;
@@ -80,7 +82,7 @@ const BarcodeScanner = ({ onScan, closeScanner }) => {
     <div style={styles.scannerContainer}>
       <div ref={scannerRef} style={styles.cameraView}></div>
 
-      {/* 📷 Dropdown for Camera Selection */}
+      {/* Dropdown for Camera Selection */}
       <select
         style={styles.selectCamera}
         value={selectedCamera}
@@ -93,7 +95,9 @@ const BarcodeScanner = ({ onScan, closeScanner }) => {
         ))}
       </select>
 
-      <button style={styles.closeButton} onClick={closeScanner}>Close Scanner</button>
+      <button style={styles.closeButton} onClick={closeScanner}>
+        Close Scanner
+      </button>
     </div>
   );
 };
