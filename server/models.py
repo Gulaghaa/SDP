@@ -17,3 +17,6 @@ class User(BaseModel):
     id: str
     username: str
     password: str
+
+class ImageInput(BaseModel):
+    image_base64: str

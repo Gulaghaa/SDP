@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
+import axios from "axios";
 
-const WEBSOCKET_URL =
-  "wss://smart-inventory-management-k5rx.onrender.com/stream";
-// "http://127.0.0.1:8080/stream";
+const API_URL = "https://smart-inventory-management-k5rx.onrender.com/detect";
+
 const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
   const webcamRef = useRef(null);
-  const socketRef = useRef(null);
   const [devices, setDevices] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState("");
-  const [processing, setProcessing] = useState(true);
   const [noDetectionTimeout, setNoDetectionTimeout] = useState(null);
 
   useEffect(() => {
@@ -17,54 +15,11 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
       const videoDevices = deviceList.filter(
         (device) => device.kind === "videoinput"
       );
-      console.log("Video Devices:", videoDevices);
       setDevices(videoDevices);
       setSelectedCamera(videoDevices[0]?.deviceId || "");
     });
 
-    socketRef.current = new WebSocket(WEBSOCKET_URL);
-
-    socketRef.current.onopen = () => console.log("Connected to WebSocket");
-    socketRef.current.onclose = () => console.log("WebSocket Disconnected");
-    socketRef.current.onerror = (error) =>
-      console.error("WebSocket Error:", error);
-
-    socketRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("Incoming Server Data:", data);
-
-      if (data.detections) {
-        console.log("Detected Objects:");
-        let found = false;
-
-        data.detections.forEach((d) => {
-          console.log(
-            `🛑 ${d.label} | Confidence: ${(d.confidence * 100).toFixed(2)}%`
-          );
-
-          // Check if one of the detected items matches our searched object
-          if (
-            d.label.toLowerCase() === itemName.toLowerCase() &&
-            d.confidence > 0.6
-          ) {
-            console.log(
-              `✅ Matched Item: ${d.label} with Confidence: ${(
-                d.confidence * 100
-              ).toFixed(2)}%`
-            );
-            found = true;
-          }
-        });
-
-        if (found) {
-          console.log("✅ Object detected successfully! Closing camera...");
-          onDetect(true);
-          socketRef.current.close();
-        }
-      }
-    };
-
-    const interval = setInterval(captureFrame, 10000);
+    const interval = setInterval(captureFrame, 1500);
 
     const timeout = setTimeout(() => {
       onCancel();
@@ -74,33 +29,48 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
-      socketRef.current.close();
     };
   }, [itemName, selectedCamera]);
 
   const captureFrame = () => {
     setTimeout(() => {
-      if (
-        webcamRef.current &&
-        socketRef.current &&
-        socketRef.current.readyState === WebSocket.OPEN
-      ) {
-        const screenshot = webcamRef.current.getScreenshot();
-        if (screenshot) {
-          const image = new Image();
-          image.src = screenshot;
-          image.onload = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = 700;
-            canvas.height = 700;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(image, 0, 0, 700, 700);
-            const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
-            socketRef.current.send(base64Image);
-          };
-        }
+      if (!webcamRef.current) return;
+      const screenshot = webcamRef.current.getScreenshot();
+      if (screenshot) {
+        const image = new Image();
+        image.src = screenshot;
+        image.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = 700;
+          canvas.height = 700;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(image, 0, 0, 700, 700);
+          const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
+
+          // 🔥 Send to backend
+          axios
+            .post(API_URL, { image_base64: base64Image })
+            .then((response) => {
+              const detections = response.data?.detections || [];
+              console.log("Detections:", detections);
+
+              const found = detections.some(
+                (d) =>
+                  d.label.toLowerCase() === itemName.toLowerCase() &&
+                  d.confidence > 0.6
+              );
+
+              if (found) {
+                console.log("✅ Object detected! Closing camera...");
+                onDetect(true);
+              }
+            })
+            .catch((error) => {
+              console.error("Detection failed", error);
+            });
+        };
       }
-    }, 2000);
+    }, 1500);
   };
 
   return (

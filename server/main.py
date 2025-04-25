@@ -7,7 +7,7 @@ from ultralytics import YOLO
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import Depends
-from models import Item, Room, User
+from models import Item, Room, ImageInput, User
 from dotenv import load_dotenv
 
 MONGO_URI = os.getenv("MONGO_URI")
@@ -40,50 +40,35 @@ db = client["inventory"]
 rooms_collection = db["rooms"]
 users_collection = db["users"]
 
-@app.websocket("/stream")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    
-    try: 
-        while True:
-            base64_data = await websocket.receive_text()
-            print(base64_data)
-            image_data = base64.b64decode(base64_data)
-            nparr = np.frombuffer(image_data, np.uint8)
-            frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+@app.post("/detect")
+async def detect_image(data: ImageInput):
+    try:
+        image_data = base64.b64decode(data.image_base64)
+        nparr = np.frombuffer(image_data, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-            if frame is None:
-                print("Error: Could not decode image")
-                continue
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid image")
 
-            # Run YOLO detection
-            results = model(frame)
-            detections = []
+        results = model(frame)
+        detections = []
 
-            for result in results:
-                for box in result.boxes:
-                    label = result.names[int(box.cls[0])]
-                    confidence = float(box.conf[0])
-                    x1, y1, x2, y2 = map(int, box.xyxy[0])
+        for result in results:
+            for box in result.boxes:
+                label = result.names[int(box.cls[0])]
+                confidence = float(box.conf[0])
+                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                if confidence >= 0.75:
+                    detections.append({
+                        "label": label,
+                        "confidence": confidence,
+                        "box": [x1, y1, x2, y2]
+                    })
 
-                    if confidence >= 0.75:
-                        detections.append({
-                            "label": label,
-                            "confidence": confidence,
-                            "box": [x1, y1, x2, y2]
-                        })
-
-            # Send back detections only, no image
-            if detections:
-                await websocket.send_json({"detections": detections})
-            else:
-                print("No valid detections, skipping frame transmission")
+        return {"detections": detections}
 
     except Exception as e:
-        print(f"Error: {e}")
-
-    finally:
-        await websocket.close()
+        raise HTTPException(status_code=500, detail=str(e))
 
 # GET all rooms
 @app.get("/rooms")
