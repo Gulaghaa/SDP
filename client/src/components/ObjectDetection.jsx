@@ -3,7 +3,7 @@ import Webcam from "react-webcam";
 
 const WEBSOCKET_URL =
   "wss://smart-inventory-management-k5rx.onrender.com/stream";
-
+// "http://127.0.0.1:8080/stream";
 const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
   const webcamRef = useRef(null);
   const socketRef = useRef(null);
@@ -64,7 +64,7 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
       }
     };
 
-    const interval = setInterval(captureFrame, 1000);
+    const interval = setInterval(captureFrame, 10000);
 
     const timeout = setTimeout(() => {
       onCancel();
@@ -79,22 +79,28 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
   }, [itemName, selectedCamera]);
 
   const captureFrame = () => {
-    if (webcamRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      const screenshot = webcamRef.current.getScreenshot();
-      if (screenshot) {
-        const image = new Image();
-        image.src = screenshot;
-        image.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = 700;
-          canvas.height = 700;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(image, 0, 0, 700, 700);
-          const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
-          socketRef.current.send(base64Image);
-        };
+    setTimeout(() => {
+      if (
+        webcamRef.current &&
+        socketRef.current &&
+        socketRef.current.readyState === WebSocket.OPEN
+      ) {
+        const screenshot = webcamRef.current.getScreenshot();
+        if (screenshot) {
+          const image = new Image();
+          image.src = screenshot;
+          image.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = 700;
+            canvas.height = 700;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0, 700, 700);
+            const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
+            socketRef.current.send(base64Image);
+          };
+        }
       }
-    }
+    }, 2000);
   };
 
   return (

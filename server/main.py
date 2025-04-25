@@ -47,6 +47,7 @@ async def websocket_endpoint(websocket: WebSocket):
     try: 
         while True:
             base64_data = await websocket.receive_text()
+            print(base64_data)
             image_data = base64.b64decode(base64_data)
             nparr = np.frombuffer(image_data, np.uint8)
             frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
