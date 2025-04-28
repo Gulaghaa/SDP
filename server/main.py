@@ -2,15 +2,13 @@ import os
 import cv2
 import base64
 import numpy as np
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
 from ultralytics import YOLO 
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import Depends
-from models import Item, Room, ImageInput, User
+from models import Item, Room, ImageInput, LoginRequest
 from dotenv import load_dotenv
-
-MONGO_URI = os.getenv("MONGO_URI")
 
 app = FastAPI()
 
@@ -26,7 +24,14 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=[
+        "Access-Control-Allow-Headers",
+        "Authorization",
+        "Content-Type",
+        "X-Requested-With",
+        "Accept",
+        "Origin"
+    ],
 )
 
 # Load trained YOLO Model
@@ -165,10 +170,34 @@ async def clear_missed_items(room_id: str):
         return {"error": "Room not found"}
     return {"message": "Missed items cleared"}
 
+@app.post("/login")
+async def login(request: LoginRequest):
+    # Find user by username
+    user = await users_collection.find_one({"username": request.username})
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    # Check password match
+    if user["password"] != request.password:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    return {"message": "Login successful"}
+
 @app.get("/inventory/check-barcode/{barcode}")
 async def check_barcode_uniqueness(barcode: str):
     room = await rooms_collection.find_one(
         {"inventory.qrCode": barcode},
+        {"_id": 0, "id": 1, "name": 1}
+    )
+    if room:
+        return {"exists": True, "room": room}
+    return {"exists": False}
+
+@app.get("/inventory/check-room-id/{room_id}")
+async def check_room_id_uniqueness(room_id: str):
+    room = await rooms_collection.find_one(
+        {"id": room_id},
         {"_id": 0, "id": 1, "name": 1}
     )
     if room:

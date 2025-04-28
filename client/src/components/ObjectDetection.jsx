@@ -47,7 +47,7 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
           ctx.drawImage(image, 0, 0, 700, 700);
           const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
 
-          // 🔥 Send to backend
+          // Send to backend
           axios
             .post(API_URL, { image_base64: base64Image })
             .then((response) => {

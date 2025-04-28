@@ -20,3 +20,7 @@ class User(BaseModel):
 
 class ImageInput(BaseModel):
     image_base64: str
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
