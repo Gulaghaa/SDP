@@ -207,7 +207,7 @@ async def check_room_id_uniqueness(room_id: str):
 @app.post("/users/add")
 async def add_user(user: User):
     # Check if user already exists (by email, for example)
-    existing_user = users_collection.find_one({"email": user.email})
+    existing_user = await users_collection.find_one({"email": user.email})
     if existing_user:
         raise HTTPException(status_code=400, detail="User with this email already exists.")
 
