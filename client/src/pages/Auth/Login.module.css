@@ -1,58 +1,75 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-    font-family: Arial, sans-serif;
-  }
-  
-  .title {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 24px;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
-  }
-  
-  .input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s ease;
-  }
-  
-  .button:hover {
-    background-color: #45A049;
-  }
-  
-  .error {
-    color: red;
-    margin-bottom: 10px;
-    font-size: 14px;
-  }
-  
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #e0e7ff, #f1f5f9);
+  font-family: "Poppins", sans-serif;
+}
+
+.card {
+  width: 350px;
+  padding: 30px 25px;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  color: #1f2937;
+}
+
+/* No border-radius for sharp flat design */
+.card,
+.input,
+.button {
+  border-radius: 0px !important;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.input {
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2937;
+}
+.input {
+  outline: none;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.button {
+  padding: 12px;
+  font-size: 14px;
+  background-color: #4c6ef5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.button:hover {
+  background-color: #3b5bdb;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+}

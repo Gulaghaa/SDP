@@ -13,15 +13,18 @@ const Login = ({ setIsAuthenticated }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://smart-inventory-management-k5rx.onrender.com/login", {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "https://smart-inventory-management-k5rx.onrender.com/login",
+        {
+          username,
+          password,
+        }
+      );
 
       if (response.status === 200) {
         setIsAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
-        history.push("/admin"); 
+        history.push("/admin");
       }
     } catch (error) {
       console.error(error);
@@ -35,27 +38,33 @@ const Login = ({ setIsAuthenticated }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Admin Login</h2>
-      {error && <p className={styles.error}>{error}</p>}
-      <form onSubmit={handleLogin} className={styles.form}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          className={styles.input}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className={styles.input}
-        />
-        <button type="submit" className={styles.button}>Login</button>
-      </form>
+      <div className={styles.card}>
+        <h2 className={styles.title}>Admin Login</h2>
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        <form onSubmit={handleLogin} className={styles.form}>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className={styles.input}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className={styles.input}
+          />
+          <button type="submit" className={styles.button}>
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
