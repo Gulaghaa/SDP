@@ -7,7 +7,7 @@ from ultralytics import YOLO
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import Depends
-from models import Item, Room, ImageInput, LoginRequest
+from models import Item, Room, ImageInput, LoginRequest, User
 from dotenv import load_dotenv
 
 app = FastAPI()
@@ -203,3 +203,16 @@ async def check_room_id_uniqueness(room_id: str):
     if room:
         return {"exists": True, "room": room}
     return {"exists": False}
+
+@app.post("/users/add")
+async def add_user(user: User):
+    # Check if user already exists (by email, for example)
+    existing_user = users_collection.find_one({"email": user.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User with this email already exists.")
+
+    # Insert new user
+    user_dict = user.dict()
+    users_collection.insert_one(user_dict)
+
+    return {"message": "User added successfully", "user": user_dict}

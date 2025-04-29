@@ -14,7 +14,7 @@ class Room(BaseModel):
     missedItems: List[Item] = []
 
 class User(BaseModel):
-    id: str
+    email: str
     username: str
     password: str
 
