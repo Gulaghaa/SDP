@@ -1,32 +1,35 @@
 import { useState } from "react";
-import { useHistory } from "react-router-dom"; 
-import { useFetchData } from "../../services/apiUtilities"; 
-import styles from "./Login.module.css"; 
+import { useHistory } from "react-router-dom";
+import axios from "axios";
+import styles from "./Login.module.css";
 
-const Login = ({ setIsAuthenticated, IsAuthenticated }) => {
+const Login = ({ setIsAuthenticated }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const history = useHistory(); 
+  const history = useHistory();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const users = await useFetchData("http://localhost:3000/users");
-      const user = users.find((u) => u.username === username && u.password === password);
+      const response = await axios.post("https://smart-inventory-management-k5rx.onrender.com/login", {
+        username,
+        password,
+      });
 
-      console.log(users, user)
-      if (user) {
+      if (response.status === 200) {
         setIsAuthenticated(true);
-        console.log(IsAuthenticated)
         localStorage.setItem("isAuthenticated", "true");
         history.push("/admin"); 
-      } else {
-        setError("Invalid username or password.");
       }
     } catch (error) {
-      setError("An error occurred. Please try again later.");
+      console.error(error);
+      if (error.response && error.response.status === 401) {
+        setError("Invalid username or password.");
+      } else {
+        setError("An error occurred. Please try again later.");
+      }
     }
   };
 

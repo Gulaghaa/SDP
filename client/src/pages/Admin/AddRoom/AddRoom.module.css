@@ -26,7 +26,6 @@
 /* 🔹 Page Title */
 .title {
   font-size: 24px;
-  font-weight: 700;
   margin-bottom: 20px;
   color: var(--text-color);
 }
@@ -290,4 +289,55 @@
     width: 100%;
     margin-top: 5px;
   }
+}
+
+
+.inventoryEditRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.inventoryInputField {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  width: 100%;
+}
+
+.qrCodeContainer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.inventoryEditRow button {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Style for save button */
+.saveButton {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.cancelButton {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.saveButton:hover {
+  background-color: #218838;
+}
+
+.cancelButton:hover {
+  background-color: #c82333;
 }

@@ -12,6 +12,7 @@ import {
   AddRoom,
   RoomsList,
   RoomItem,
+  EditRoom
 } from "./pages/index";
 
 const App = () => {
@@ -42,11 +43,15 @@ const App = () => {
         />
       </Route>
       <Route exact path="/admin">
-        {isAuthenticated ? <AdminPanel /> : <Redirect to="/login" />}
+        <AdminPanel />
       </Route>
       <Route exact path="/admin/add-room">
-        {isAuthenticated ? <AddRoom /> : <Redirect to="/login" />}
+        <AddRoom />
       </Route>
+      <Route path="/admin/edit-room/:roomId">
+        <EditRoom />
+      </Route>
+
     </Switch>
   );
 };

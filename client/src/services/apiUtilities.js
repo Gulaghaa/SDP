@@ -65,3 +65,15 @@ export const checkBarcodeInDatabase = async (barcode) => {
     return { exists: false };
   }
 };
+
+export const checkRoomIdInDatabase = async (roomId) => {
+  try {
+    const res = await axios.get(
+      `https://smart-inventory-management-k5rx.onrender.com/inventory/check-room-id/${roomId}`
+    );
+    return res.data.exists; 
+  } catch (err) {
+    console.error("Barcode check failed:", err);
+    return { exists: false };
+  }
+};

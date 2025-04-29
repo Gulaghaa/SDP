@@ -4,6 +4,7 @@ import Home from './Home/Home'
 import AddRoom from'./Admin/AddRoom/AddRoom'
 import RoomsList from './Rooms/RoomsList'
 import RoomItem from './Rooms/RoomItem'
+import EditRoom from './Admin/EditRoom/EditRoom'
 
 
 export {
@@ -12,5 +13,6 @@ export {
     Home,
     AddRoom,
     RoomsList,
-    RoomItem
+    RoomItem,
+    EditRoom
 }

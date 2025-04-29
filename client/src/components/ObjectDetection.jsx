@@ -16,7 +16,17 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
         (device) => device.kind === "videoinput"
       );
       setDevices(videoDevices);
-      setSelectedCamera(videoDevices[0]?.deviceId || "");
+      const iPhoneCamera = videoDevices.find(
+        (device) =>
+          device.label.includes("iPhone") ||
+          device.label.includes("Camo") ||
+          device.label.includes("EpocCam")
+      );
+      if (iPhoneCamera) {
+        setSelectedCamera(iPhoneCamera.deviceId);
+      } else if (videoDevices.length > 0) {
+        setSelectedCamera(videoDevices[0].deviceId);
+      }
     });
 
     const interval = setInterval(captureFrame, 1500);
@@ -47,7 +57,6 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
           ctx.drawImage(image, 0, 0, 700, 700);
           const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
 
-          // Send to backend
           axios
             .post(API_URL, { image_base64: base64Image })
             .then((response) => {
@@ -92,8 +101,9 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
 
         <div style={styles.webcamContainer}>
           <Webcam
+            key={selectedCamera}  // ✅ This line is critical to force remount on camera change
             ref={webcamRef}
-            videoConstraints={{ deviceId: selectedCamera }}
+            videoConstraints={{ deviceId: { exact: selectedCamera } }} // ✅ Ensure strict selection
             screenshotFormat="image/jpeg"
             style={styles.webcam}
           />
