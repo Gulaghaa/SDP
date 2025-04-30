@@ -1,4 +1,4 @@
-/* 🎨 Color Variables */
+
 :root {
   --primary-color: #4c6ef5;
   --secondary-color: #f8f9fc;
@@ -11,7 +11,7 @@
   --font-family: "Poppins", sans-serif;
 }
 
-/* 🏠 Main Container */
+
 .container {
   max-width: 600px;
   margin: 50px auto;
@@ -23,21 +23,21 @@
   text-align: center;
 }
 
-/* 🔹 Page Title */
+
 .title {
   font-size: 24px;
   margin-bottom: 20px;
   color: var(--text-color);
 }
 
-/* 📌 Form */
+
 .form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* 🏷️ Labels */
+
 .label {
   font-size: 16px;
   font-weight: 500;
@@ -45,7 +45,7 @@
   text-align: left;
 }
 
-/* 🏷️ Input Fields */
+
 .input {
   padding: 12px;
   font-size: 16px;
@@ -60,7 +60,7 @@
   outline: none;
 }
 
-/* 📦 Inventory Section */
+
 .inventorySection {
   margin-top: 20px;
   padding: 15px;
@@ -70,7 +70,7 @@
   text-align: left;
 }
 
-/* 🎯 Inventory Input */
+
 .inventoryInput {
   display: flex;
   flex-wrap: wrap;
@@ -79,7 +79,7 @@
   margin-bottom: 10px;
 }
 
-/* 📸 QR Code Scanner & Input */
+
 .qrInputContainer {
   display: flex;
   align-items: center;
@@ -89,7 +89,7 @@
 
 .qrInputContainer input {
   flex: 1;
-  min-width: 220px; /* Ensuring QR Input is longer */
+  min-width: 220px; 
   padding: 10px;
   font-size: 16px;
   border: 1px solid var(--input-border);
@@ -128,14 +128,14 @@
   background-color: #218838;
 }
 
-/* 📜 Inventory List */
+
 .inventoryList {
   list-style: none;
   padding: 0;
   margin-top: 10px;
 }
 
-/* 🏷️ Inventory Item */
+
 .inventoryItem {
   padding: 12px;
   background-color: white;
@@ -154,7 +154,7 @@
   transform: scale(1.02);
 }
 
-/* 🎯 Editing Inventory */
+
 .inventoryEdit {
   display: flex;
   gap: 10px;
@@ -170,7 +170,7 @@
   width: 100%;
 }
 
-/* ✏️ Edit Button */
+
 .editButton {
   background-color: grey;
   color: black;
@@ -189,7 +189,7 @@
   background-color: #e0a800;
 }
 
-/* ❌ Delete Button */
+
 .deleteButton {
   background-color: var(--error-color);
   color: white;
@@ -208,7 +208,7 @@
   background-color: #e0a800;
 }
 
-/* ✅ Save Changes Button */
+
 .saveButton {
   background-color: var(--accent-color);
   color: white;
@@ -227,7 +227,7 @@
   background-color: #218838;
 }
 
-/* ❌ Cancel Button */
+
 .cancelButton {
   background-color: var(--error-color);
   color: white;
@@ -246,7 +246,7 @@
   background-color: #c82333;
 }
 
-/* 💾 Save Room Button */
+
 .submitButton {
   background-color: var(--primary-color);
   color: white;
@@ -264,7 +264,7 @@
   background-color: #3b5bdb;
 }
 
-/* 🛠 Responsive Design */
+
 @media (max-width: 768px) {
   .inventoryInput {
     flex-direction: column;
@@ -323,7 +323,7 @@
   transition: background-color 0.3s;
 }
 
-/* Style for save button */
+
 .saveButton {
   background-color: var(--accent-color);
   color: white;
@@ -340,4 +340,59 @@
 
 .cancelButton:hover {
   background-color: #c82333;
+}
+
+
+@media (max-width: 768px) {
+
+  .title {
+    font-size: 20px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .input,
+  .qrInputContainer input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .cameraButton {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .addButton,
+  .submitButton {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+
+  .qrInputContainer {
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .qrInputContainer input {
+    width: 100%;
+    flex: 1;
+  }
+
+  .cameraButton {
+    flex-shrink: 0;
+  }
+
+  .inventoryItem {
+    font-size: 14px;
+  }
+
+  .editButton,
+  .deleteButton {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
 }

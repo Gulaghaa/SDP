@@ -25,7 +25,7 @@ const AddRoom = () => {
 
   const getAZTime = () => {
     const now = new Date();
-    now.setHours(now.getHours()); // Adjust UTC → Baku time
+    now.setHours(now.getHours()); 
     const yyyy = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, "0");
     const dd = String(now.getDate()).padStart(2, "0");
@@ -128,7 +128,7 @@ const AddRoom = () => {
     const timestamp = getAZTime()
 
     const formattedInventory = inventory.map((item, i) => ({
-      id: `INV-${i + 1}`, // Auto-generate inventory item IDs
+      id: `INV-${i + 1}`, 
       name: item.name,
       qrCode: item.qrCode,
     }));

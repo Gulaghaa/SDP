@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useFetchData, usePutData } from "../../services/apiUtilities";
 import { BarcodeScanner, Navbar } from "../../components/index";
-import ObjectDetection from "../../components/ObjectDetection"; // Import Object Detection
+import ObjectDetection from "../../components/ObjectDetection";
 import styles from "./RoomItem.module.css";
 
 const RoomItem = () => {
@@ -26,7 +26,7 @@ const RoomItem = () => {
 
   const getAZTime = () => {
     const now = new Date();
-    now.setHours(now.getHours()); // Adjust UTC → Baku time
+    now.setHours(now.getHours()); 
     const yyyy = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, "0");
     const dd = String(now.getDate()).padStart(2, "0");
@@ -166,7 +166,7 @@ const RoomItem = () => {
     const backendMissedItems = room.missedItems || [];
     const updatedTime = getAZTime();
 
-    // Avoid duplicate QR codes
+    
     const updatedMissedItems = [
       ...backendMissedItems.filter((item) => item.qrCode !== itemToMove.qrCode),
       itemToMove,
@@ -185,7 +185,7 @@ const RoomItem = () => {
         }
       );
 
-      // Update both room state and missedItems state for immediate UI feedback
+      
       setRoom((prevRoom) => ({
         ...prevRoom,
         inventory: updatedInventory,
@@ -195,7 +195,7 @@ const RoomItem = () => {
 
       setMissedItems(updatedMissedItems);
 
-      // Cleanup check state for that index
+      
       setBarcodeChecks((prev) => {
         const updated = { ...prev };
         delete updated[index];

@@ -4,8 +4,8 @@ import Quagga from "quagga";
 const BarcodeScanner = ({ onScan, closeScanner }) => {
   const scannerRef = useRef(null);
   const [scanning, setScanning] = useState(true);
-  const [devices, setDevices] = useState([]); // Store camera devices
-  const [selectedCamera, setSelectedCamera] = useState(""); // Selected camera ID
+  const [devices, setDevices] = useState([]); 
+  const [selectedCamera, setSelectedCamera] = useState(""); 
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((deviceList) => {
@@ -82,7 +82,7 @@ const BarcodeScanner = ({ onScan, closeScanner }) => {
     <div style={styles.scannerContainer}>
       <div ref={scannerRef} style={styles.cameraView}></div>
 
-      {/* Dropdown for Camera Selection */}
+      
       <select
         style={styles.selectCamera}
         value={selectedCamera}

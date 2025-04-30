@@ -101,9 +101,9 @@ const ObjectDetection = ({ itemName, onDetect, onCancel }) => {
 
         <div style={styles.webcamContainer}>
           <Webcam
-            key={selectedCamera}  // ✅ This line is critical to force remount on camera change
+            key={selectedCamera}  
             ref={webcamRef}
-            videoConstraints={{ deviceId: { exact: selectedCamera } }} // ✅ Ensure strict selection
+            videoConstraints={{ deviceId: { exact: selectedCamera } }} 
             screenshotFormat="image/jpeg"
             style={styles.webcam}
           />

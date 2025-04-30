@@ -1,14 +1,14 @@
 *{
   /* border: 1px solid black; */
 }
-/* 📦 Container */
+
 .container {
   padding: 15px 50px;
   font-family: "Poppins", sans-serif;
   color: #2c3e50;
 }
 
-/* 🔹 Title */
+
 .title {
   font-size: 22px;
   font-weight: 400;
@@ -21,7 +21,7 @@
   margin-bottom: 15px;
 }
 
-/* 📋 Table Styling */
+
 .inventoryTable {
   width: 100%;
   border-collapse: collapse;
@@ -48,7 +48,6 @@
   background: #f9f9f9;
 }
 
-/* 🏷 Item Styling */
 .itemName {
   color: #2c3e50;
 }
@@ -58,7 +57,7 @@
   color: #7f8c8d;
 }
 
-/* ✅ Checkboxes */
+
 input[type="checkbox"] {
   appearance: none;
   width: 18px;
@@ -79,7 +78,7 @@ input[type="checkbox"]:checked::after {
   left: 2px;
 }
 
-/* 🎯 Scan Button */
+
 .scanButton {
   background-color: #5c67f2;
   color: white;
@@ -95,7 +94,7 @@ input[type="checkbox"]:checked::after {
   background-color: #4a54e1;
 }
 
-/* 🔘 Check Buttons */
+
 .checkButton {
   background-color: #f8f9fa;
   color: #37474f;
@@ -111,7 +110,6 @@ input[type="checkbox"]:checked::after {
   background-color: #e8e8e8;
 }
 
-/* 🚨 Mark as Missing Button */
 .missButton {
   background-color: #ff6b6b;
   color: white;
@@ -133,7 +131,6 @@ input[type="checkbox"]:checked::after {
   cursor: not-allowed;
 }
 
-/* 🔄 Return to Inventory Button */
 .returnButton {
   background-color: #48c774;
   color: white;
@@ -152,7 +149,7 @@ input[type="checkbox"]:checked::after {
 .progressBar {
   position: relative;
   width: 80%;
-  margin: 0 auto; /* Center horizontally */
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -211,7 +208,6 @@ input[type="checkbox"]:checked::after {
 
 
 
-/* ✅ Status Text */
 .present {
   color: #28a745;
   font-size: 14px;
@@ -223,7 +219,6 @@ input[type="checkbox"]:checked::after {
 }
 
 
-/* ✅ Custom Modal */
 .modal {
   position: fixed;
   top: 20px;
@@ -246,7 +241,6 @@ input[type="checkbox"]:checked::after {
   background: #dc3545;
 }
 
-/* ⏳ Fade In & Out Animation */
 @keyframes fadeInOut {
   0% {
     opacity: 0;
@@ -310,4 +304,76 @@ input[type="checkbox"]:checked::after {
 
 .finishButton:hover {
   background-color: rgb(230, 100, 70);
+}
+
+
+  
+
+
+@media (max-width: 768px) {
+  .container{
+    padding: 15px;
+  }
+  .inventoryTable {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .inventoryTable thead,
+  .inventoryTable tbody,
+  .inventoryTable tr,
+  .inventoryTable th,
+  .inventoryTable td {
+    white-space: nowrap;
+  }
+
+  .inventoryTable th,
+  .inventoryTable td {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .scanButton,
+  .missButton,
+  .returnButton {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .progressBar {
+    width: 80px;
+    height: 24px;
+  }
+
+  .stepCircle {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  
+
+  .finishButton {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+}
+
+
+@media (max-width: 1200px) {
+  .progressBar {
+    width: 80px;
+  }
+
+  .stepCircle {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
 }
